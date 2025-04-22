@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Football Guess Who - System Diagrams</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .diagram-container {
+            margin-bottom: 50px;
+        }
+        h1 {
+            color: #333;
+        }
+        h2 {
+            color: #555;
+            margin-top: 30px;
+        }
+        .mermaid {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        button {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 10px 15px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 10px 2px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Football Guess Who - System Architecture & Data Flow</h1>
+
+    <div class="diagram-container">
+        <h2>System Architecture Diagram</h2>
+        <div class="mermaid" id="system-architecture">
+graph TB
+    subgraph "Frontend (React)"
+        UI[UI Components]
+        GameClient[Game Client]
+        StateManager[State Manager]
+        WebSocketClient[Socket.io Client]
+    end
+
+    subgraph "Backend (Node.js + Express)"
+        API[REST API]
+        GameServer[Game Server]
+        WebSocketServer[Socket.io Server]
+        GameLogic[Game Logic]
+        MatchMaker[Matchmaking Service]
+        AIPlayer[AI Player Service]
+    end
+
+    subgraph "Database (PostgreSQL)"
+        FootballerDB[(Footballer Data)]
+        GameSessionsDB[(Game Sessions)]
+        UserDB[(User Data)]
+        StatisticsDB[(Game Statistics)]
+    end
+
+    UI --> StateManager
+    UI --> GameClient
+    GameClient --> WebSocketClient
+    GameClient --> StateManager
+    
+    WebSocketClient <--> WebSocketServer
+    GameClient --> API
+    
+    API --> GameServer
+    WebSocketServer --> GameServer
+    GameServer --> GameLogic
+    GameServer --> MatchMaker
+    GameServer --> AIPlayer
+    
+    GameLogic --> FootballerDB
+    GameServer --> GameSessionsDB
+    MatchMaker --> UserDB
+    GameServer --> StatisticsDB
+    AIPlayer --> GameLogic
+    
+    classDef frontend fill:#D6EAF8,stroke:#2E86C1
+    classDef backend fill:#D5F5E3,stroke:#27AE60
+    classDef database fill:#FADBD8,stroke:#E74C3C
+    
+    class UI,GameClient,StateManager,WebSocketClient frontend
+    class API,GameServer,WebSocketServer,GameLogic,MatchMaker,AIPlayer backend
+    class FootballerDB,GameSessionsDB,UserDB,StatisticsDB database
+        </div>
+        <button onclick="saveDiagram('system-architecture', 'system-architecture.png')">Save as PNG</button>
+    </div>
+
+    <div class="diagram-container">
+        <h2>Entity Relationship Diagram</h2>
+        <div class="mermaid" id="entity-relationship">
+erDiagram
+    FOOTBALLER {
+        string id PK
+        string name
+        string image
+        string club
+        string nation
+        enum position
+        enum ageBracket
+        enum hairColor
+        enum facialHair
+        enum bootsColor
+    }
+    
+    USER {
+        string id PK
+        string displayName
+        string email
+        timestamp createdAt
+        timestamp lastLogin
+    }
+    
+    PLAYER_SESSION {
+        string sessionId PK
+        string socketId
+        string displayName
+        boolean isHuman
+        string secretId FK
+        array eliminatedIds
+        int remainingQuestions
+        boolean isTurn
+        string userId FK "Null for AI players"
+    }
+    
+    GAME_ROOM {
+        string roomId PK
+        enum mode "SP or MP"
+        array players
+        enum state "waiting, in-progress, finished"
+        array turnHistory
+        timestamp startedAt
+        string winnerId FK "Optional"
+    }
+    
+    QUESTION {
+        string id PK
+        string text
+        string trait
+        array expectedValues
+    }
+    
+    GAME_STATISTICS {
+        string id PK
+        string gameRoomId FK
+        int totalTurns
+        int questionCount
+        timestamp duration
+        string winnerId FK
+        timestamp createdAt
+    }
+
+    FOOTBALLER ||--o{ PLAYER_SESSION : "is secret for"
+    USER ||--o{ PLAYER_SESSION : "participates as"
+    PLAYER_SESSION }|--|| GAME_ROOM : "plays in"
+    GAME_ROOM ||--o{ GAME_STATISTICS : "generates"
+    USER ||--o{ GAME_STATISTICS : "has"
+        </div>
+        <button onclick="saveDiagram('entity-relationship', 'entity-relationship.png')">Save as PNG</button>
+    </div>
+
+    <div class="diagram-container">
+        <h2>Event Flow & Communication Diagram</h2>
+        <div class="mermaid" id="event-flow">
+sequenceDiagram
+    participant ClientA as Player A Client
+    participant Server as Game Server
+    participant ClientB as Player B Client
+    participant AI as AI Player (SP Mode)
+    participant DB as Database
+
+    %% Game Initialization
+    alt Single Player Mode
+        ClientA->>Server: Join Single Player Game
+        Server->>AI: Initialize AI Player
+        Server->>DB: Get Footballer Data
+        Server->>ClientA: Game Ready (roomId)
+    else Multiplayer Mode
+        ClientA->>Server: Create Room
+        Server->>ClientA: Room Created (roomId)
+        ClientB->>Server: Join Room (roomId)
+        Server->>DB: Get Footballer Data
+        Server->>ClientA: Game Ready
+        Server->>ClientB: Game Ready
+    end
+
+    %% Game Start
+    Server->>Server: Assign Secrets & First Turn
+    Server->>ClientA: Game Start Event
+    Server->>ClientB: Game Start Event
+
+    %% Question Flow
+    alt Player A's Turn
+        ClientA->>Server: ASK_QUESTION
+        Server->>ClientB: Relay Question
+        ClientB->>Server: ANSWER_QUESTION
+        Server->>Server: Update GameRoom State
+        Server->>DB: Log Turn
+        Server->>ClientA: Answer & Eliminated Cards
+        Server->>ClientB: Eliminated Cards & Turn Update
+    else Player B's Turn (or AI in SP)
+        ClientB->>Server: ASK_QUESTION
+        alt Single Player
+            Server->>AI: Process Question
+            AI->>Server: ANSWER_QUESTION
+        else Multiplayer
+            Server->>ClientA: Relay Question
+            ClientA->>Server: ANSWER_QUESTION
+        end
+        Server->>Server: Update GameRoom State
+        Server->>DB: Log Turn
+        Server->>ClientB: Answer & Eliminated Cards
+        Server->>ClientA: Eliminated Cards & Turn Update
+    end
+    
+    %% Game End
+    alt Player Makes Correct Guess
+        ClientA->>Server: MAKE_GUESS
+        Server->>Server: Verify Guess
+        Server->>DB: Update Game Stats
+        Server->>ClientA: GAME_OVER (Winner)
+        Server->>ClientB: GAME_OVER (Loser)
+    else Player Makes Wrong Guess
+        ClientA->>Server: MAKE_GUESS
+        Server->>Server: Verify Guess
+        Server->>DB: Update Game Stats
+        Server->>ClientA: GAME_OVER (Loser)
+        Server->>ClientB: GAME_OVER (Winner)
+    end
+    
+    %% Rematch Flow
+    ClientA->>Server: REQUEST_REMATCH
+    ClientB->>Server: REQUEST_REMATCH
+    Server->>Server: Reset GameRoom State
+    Server->>DB: Create New Game Session
+    Server->>ClientA: Game Start Event
+    Server->>ClientB: Game Start Event
+        </div>
+        <button onclick="saveDiagram('event-flow', 'event-flow.png')">Save as PNG</button>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'default',
+            securityLevel: 'loose',
+        });
+
+        function saveDiagram(id, filename) {
+            const svgEl = document.querySelector('#' + id + ' svg');
+            if (!svgEl) {
+                alert('SVG element not found. Please ensure the diagram has rendered.');
+                return;
+            }
+            
+            // Get SVG source
+            const serializer = new XMLSerializer();
+            let source = serializer.serializeToString(svgEl);
+            
+            // Add name spaces
+            if (!source.match(/^<svg[^>]+xmlns="http:\/\/www\.w3\.org\/2000\/svg"/)) {
+                source = source.replace(/^<svg/, '<svg xmlns="http://www.w3.org/2000/svg"');
+            }
+            if (!source.match(/^<svg[^>]+"http:\/\/www\.w3\.org\/1999\/xlink"/)) {
+                source = source.replace(/^<svg/, '<svg xmlns:xlink="http://www.w3.org/1999/xlink"');
+            }
+            
+            // Add XML declaration
+            source = '<?xml version="1.0" standalone="no"?>\r\n' + source;
+            
+            // Convert SVG source to URI data scheme
+            const url = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(source);
+            
+            // Create a canvas element to render the SVG
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            const img = new Image();
+            
+            img.onload = function() {
+                canvas.width = img.width;
+                canvas.height = img.height;
+                
+                // Draw white background
+                ctx.fillStyle = 'white';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                // Draw SVG on canvas
+                ctx.drawImage(img, 0, 0);
+                
+                // Convert to PNG and download
+                const pngUrl = canvas.toDataURL('image/png');
+                const downloadLink = document.createElement('a');
+                downloadLink.href = pngUrl;
+                downloadLink.download = filename;
+                document.body.appendChild(downloadLink);
+                downloadLink.click();
+                document.body.removeChild(downloadLink);
+            };
+            
+            img.src = url;
+        }
+    </script>
+</body>
+</html> 

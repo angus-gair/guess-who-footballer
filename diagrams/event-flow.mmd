@@ -1,0 +1,73 @@
+sequenceDiagram
+    participant ClientA as Player A Client
+    participant Server as Game Server
+    participant ClientB as Player B Client
+    participant AI as AI Player (SP Mode)
+    participant DB as Database
+
+    %% Game Initialization
+    alt Single Player Mode
+        ClientA->>Server: Join Single Player Game
+        Server->>AI: Initialize AI Player
+        Server->>DB: Get Footballer Data
+        Server->>ClientA: Game Ready (roomId)
+    else Multiplayer Mode
+        ClientA->>Server: Create Room
+        Server->>ClientA: Room Created (roomId)
+        ClientB->>Server: Join Room (roomId)
+        Server->>DB: Get Footballer Data
+        Server->>ClientA: Game Ready
+        Server->>ClientB: Game Ready
+    end
+
+    %% Game Start
+    Server->>Server: Assign Secrets & First Turn
+    Server->>ClientA: Game Start Event
+    Server->>ClientB: Game Start Event
+
+    %% Question Flow
+    alt Player A's Turn
+        ClientA->>Server: ASK_QUESTION
+        Server->>ClientB: Relay Question
+        ClientB->>Server: ANSWER_QUESTION
+        Server->>Server: Update GameRoom State
+        Server->>DB: Log Turn
+        Server->>ClientA: Answer & Eliminated Cards
+        Server->>ClientB: Eliminated Cards & Turn Update
+    else Player B's Turn (or AI in SP)
+        ClientB->>Server: ASK_QUESTION
+        alt Single Player
+            Server->>AI: Process Question
+            AI->>Server: ANSWER_QUESTION
+        else Multiplayer
+            Server->>ClientA: Relay Question
+            ClientA->>Server: ANSWER_QUESTION
+        end
+        Server->>Server: Update GameRoom State
+        Server->>DB: Log Turn
+        Server->>ClientB: Answer & Eliminated Cards
+        Server->>ClientA: Eliminated Cards & Turn Update
+    end
+    
+    %% Game End
+    alt Player Makes Correct Guess
+        ClientA->>Server: MAKE_GUESS
+        Server->>Server: Verify Guess
+        Server->>DB: Update Game Stats
+        Server->>ClientA: GAME_OVER (Winner)
+        Server->>ClientB: GAME_OVER (Loser)
+    else Player Makes Wrong Guess
+        ClientA->>Server: MAKE_GUESS
+        Server->>Server: Verify Guess
+        Server->>DB: Update Game Stats
+        Server->>ClientA: GAME_OVER (Loser)
+        Server->>ClientB: GAME_OVER (Winner)
+    end
+    
+    %% Rematch Flow
+    ClientA->>Server: REQUEST_REMATCH
+    ClientB->>Server: REQUEST_REMATCH
+    Server->>Server: Reset GameRoom State
+    Server->>DB: Create New Game Session
+    Server->>ClientA: Game Start Event
+    Server->>ClientB: Game Start Event 

@@ -1,0 +1,66 @@
+erDiagram
+    FOOTBALLER {
+        string id PK
+        string name
+        string image
+        string club
+        string nation
+        enum position
+        enum ageBracket
+        enum hairColor
+        enum facialHair
+        enum bootsColor
+    }
+    
+    USER {
+        string id PK
+        string displayName
+        string email
+        timestamp createdAt
+        timestamp lastLogin
+    }
+    
+    PLAYER_SESSION {
+        string sessionId PK
+        string socketId
+        string displayName
+        boolean isHuman
+        string secretId FK
+        array eliminatedIds
+        int remainingQuestions
+        boolean isTurn
+        string userId FK "Null for AI players"
+    }
+    
+    GAME_ROOM {
+        string roomId PK
+        enum mode "SP or MP"
+        array players
+        enum state "waiting, in-progress, finished"
+        array turnHistory
+        timestamp startedAt
+        string winnerId FK "Optional"
+    }
+    
+    QUESTION {
+        string id PK
+        string text
+        string trait
+        array expectedValues
+    }
+    
+    GAME_STATISTICS {
+        string id PK
+        string gameRoomId FK
+        int totalTurns
+        int questionCount
+        timestamp duration
+        string winnerId FK
+        timestamp createdAt
+    }
+
+    FOOTBALLER ||--o{ PLAYER_SESSION : "is secret for"
+    USER ||--o{ PLAYER_SESSION : "participates as"
+    PLAYER_SESSION }|--|| GAME_ROOM : "plays in"
+    GAME_ROOM ||--o{ GAME_STATISTICS : "generates"
+    USER ||--o{ GAME_STATISTICS : "has" 

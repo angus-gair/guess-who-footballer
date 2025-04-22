@@ -1,0 +1,51 @@
+graph TB
+    subgraph "Frontend (React)"
+        UI[UI Components]
+        GameClient[Game Client]
+        StateManager[State Manager]
+        WebSocketClient[Socket.io Client]
+    end
+
+    subgraph "Backend (Node.js + Express)"
+        API[REST API]
+        GameServer[Game Server]
+        WebSocketServer[Socket.io Server]
+        GameLogic[Game Logic]
+        MatchMaker[Matchmaking Service]
+        AIPlayer[AI Player Service]
+    end
+
+    subgraph "Database (PostgreSQL)"
+        FootballerDB[(Footballer Data)]
+        GameSessionsDB[(Game Sessions)]
+        UserDB[(User Data)]
+        StatisticsDB[(Game Statistics)]
+    end
+
+    UI --> StateManager
+    UI --> GameClient
+    GameClient --> WebSocketClient
+    GameClient --> StateManager
+    
+    WebSocketClient <--> WebSocketServer
+    GameClient --> API
+    
+    API --> GameServer
+    WebSocketServer --> GameServer
+    GameServer --> GameLogic
+    GameServer --> MatchMaker
+    GameServer --> AIPlayer
+    
+    GameLogic --> FootballerDB
+    GameServer --> GameSessionsDB
+    MatchMaker --> UserDB
+    GameServer --> StatisticsDB
+    AIPlayer --> GameLogic
+    
+    classDef frontend fill:#D6EAF8,stroke:#2E86C1
+    classDef backend fill:#D5F5E3,stroke:#27AE60
+    classDef database fill:#FADBD8,stroke:#E74C3C
+    
+    class UI,GameClient,StateManager,WebSocketClient frontend
+    class API,GameServer,WebSocketServer,GameLogic,MatchMaker,AIPlayer backend
+    class FootballerDB,GameSessionsDB,UserDB,StatisticsDB database 
