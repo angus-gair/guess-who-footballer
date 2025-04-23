@@ -1,0 +1,189 @@
+// This is the Prisma schema file for Football Guess Who
+// It defines all database models and relationships
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// User model for player accounts
+model User {
+  id         String   @id @default(uuid())
+  username   String   @unique
+  email      String   @unique
+  password   String
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+  games      Game[]   @relation("PlayerGames")
+  createdGames Game[]   @relation("CreatorGames")
+
+  @@map("users")
+}
+
+// Footballer card data
+model Footballer {
+  id         String   @id @default(uuid())
+  name       String
+  imageUrl   String   @map("image_url")
+  team       String
+  position   String
+  nationality String
+  age        Int
+  height     Int
+  strongFoot String   @map("strong_foot")
+  hairColor  String   @map("hair_color")
+  facialHair Boolean  @default(false) @map("facial_hair")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  @@map("footballers")
+}
+
+// Game room for a match session
+model GameRoom {
+  id           String          @id @default(uuid())
+  roomCode     String          @unique
+  mode         GameMode
+  state        GameState
+  subState     GameSubState?
+  players      PlayerSession[]
+  turnHistory  TurnRecord[]
+  startedAt    DateTime?
+  endedAt      DateTime?
+  winnerId     String?
+  settings     Json
+  statistics   GameStatistic?
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+
+  @@map("game_rooms")
+}
+
+// Player state within a game
+model PlayerSession {
+  id               String       @id @default(uuid())
+  displayName      String
+  isHuman          Boolean
+  isTurn           Boolean
+  lastActive       DateTime     @default(now())
+  wantsRematch     Boolean      @default(false)
+  remainingGuesses Int
+  user             User?        @relation(fields: [userId], references: [id])
+  userId           String?
+  gameRoom         GameRoom     @relation(fields: [gameRoomId], references: [id])
+  gameRoomId       String
+  secretFootballer Footballer   @relation("SecretFootballer", fields: [secretId], references: [id])
+  secretId         String
+  eliminatedFootballers Footballer[] @relation("EliminatedFootballers")
+  askedQuestions   Question[]   @relation("AskedQuestions")
+  turns            TurnRecord[] @relation("PlayerTurns")
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+
+  @@map("player_sessions")
+}
+
+// Question catalog
+model Question {
+  id             String       @id @default(uuid())
+  text           String
+  trait          String
+  expectedValues String[]
+  category       String
+  askedBy        PlayerSession[] @relation("AskedQuestions")
+  turnRecords    TurnRecord[]
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@map("questions")
+}
+
+// Record of each turn
+model TurnRecord {
+  id              String       @id @default(uuid())
+  playerSession   PlayerSession @relation("PlayerTurns", fields: [playerSessionId], references: [id])
+  playerSessionId String
+  question        Question?    @relation(fields: [questionId], references: [id])
+  questionId      String?
+  guess           Footballer?  @relation("FootballerGuess", fields: [guessId], references: [id])
+  guessId         String?
+  answer          Boolean?
+  turnType        TurnType
+  timestamp       DateTime     @default(now())
+  gameRoom        GameRoom     @relation(fields: [gameRoomId], references: [id])
+  gameRoomId      String
+
+  @@map("turn_records")
+}
+
+// Game statistics
+model GameStatistic {
+  id           String       @id @default(uuid())
+  totalTurns   Int
+  questionCount Int
+  duration     Int
+  createdAt    DateTime     @default(now())
+  gameRoom     GameRoom     @relation(fields: [gameRoomId], references: [id])
+  gameRoomId   String       @unique
+  winnerId     String?
+
+  @@map("game_statistics")
+}
+
+// Enums
+enum Position {
+  GK
+  DEF
+  MID
+  FWD
+}
+
+enum GameMode {
+  SP
+  MP
+}
+
+enum GameState {
+  WAITING
+  IN_PROGRESS
+  FINISHED
+}
+
+enum GameSubState {
+  WAITING_FOR_ANSWER
+  PENDING_REMATCH
+}
+
+enum TurnType {
+  QUESTION
+  GUESS
+}
+
+model Game {
+  id         String   @id @default(uuid())
+  status     GameStatus @default(WAITING)
+  gameMode   GameMode @default(SINGLE_PLAYER) @map("game_mode")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+  players    User[]   @relation("PlayerGames")
+  creator    User     @relation("CreatorGames", fields: [creatorId], references: [id])
+  creatorId  String   @map("creator_id")
+  
+  @@map("games")
+}
+
+enum GameStatus {
+  WAITING
+  IN_PROGRESS
+  COMPLETED
+  ABANDONED
+}
+
+enum GameMode {
+  SINGLE_PLAYER
+  MULTI_PLAYER
+} 

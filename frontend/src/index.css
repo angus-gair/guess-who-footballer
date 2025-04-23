@@ -1,0 +1,58 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Montserrat:wght@400;500;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: 'Inter', sans-serif;
+    color: #333333;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+  }
+}
+
+@layer components {
+  .btn {
+    @apply px-6 py-3 rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2;
+  }
+  
+  .btn-primary {
+    @apply btn bg-primary-blue text-white hover:bg-opacity-90 focus:ring-primary-blue;
+  }
+  
+  .btn-secondary {
+    @apply btn border-2 border-primary-blue text-primary-blue hover:bg-primary-blue hover:bg-opacity-10 focus:ring-primary-blue;
+  }
+  
+  .btn-game {
+    @apply btn bg-accent-yellow text-dark-gray hover:bg-opacity-90 focus:ring-accent-yellow;
+  }
+  
+  .card {
+    @apply bg-white rounded-lg shadow-card p-4;
+  }
+  
+  .footballer-card {
+    @apply relative rounded-lg shadow-card overflow-hidden;
+  }
+  
+  .footballer-card-active {
+    @apply footballer-card;
+  }
+  
+  .footballer-card-eliminated {
+    @apply footballer-card grayscale opacity-60;
+  }
+  
+  .footballer-card-selected {
+    @apply footballer-card ring-4 ring-primary-blue;
+  }
+  
+  .input {
+    @apply px-4 py-2 border border-medium-gray rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue focus:border-transparent;
+  }
+}

@@ -1,0 +1,27 @@
+=== System Metrics ===
+Date: Wed Apr 23 12:50:00 PM UTC 2025
+
+CPU Usage:
+%Cpu(s): 98.7 us,  1.3 sy,  0.0 ni,  0.0 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st 
+
+Memory Usage:
+               total        used        free      shared  buff/cache   available
+Mem:            15Gi       6.5Gi       5.3Gi        16Mi       3.7Gi       8.7Gi
+Swap:             0B          0B          0B
+
+Disk Usage:
+Filesystem      Size  Used Avail Use% Mounted on
+tmpfs           1.6G  1.8M  1.6G   1% /run
+efivarfs        256K   11K  246K   5% /sys/firmware/efi/efivars
+/dev/sda1       150G   40G  104G  28% /
+tmpfs           7.7G     0  7.7G   0% /dev/shm
+tmpfs           5.0M     0  5.0M   0% /run/lock
+/dev/sda15      253M  150K  252M   1% /boot/efi
+tmpfs           1.6G   12K  1.6G   1% /run/user/0
+overlay         150G   40G  104G  28% /var/lib/docker/overlay2/55265f07788451fdeb2a1444439e7a0d73f3e4c528909afb5372ff25c299648b/merged
+overlay         150G   40G  104G  28% /var/lib/docker/overlay2/f84ccf7baa9f40ac89a896002b238f1a314ec8715c4f8c931e88b08ce7390606/merged
+overlay         150G   40G  104G  28% /var/lib/docker/overlay2/c4074433f05e78cf97196b152b4f709681109dfbcb8e78de118d37805437ec63/merged
+overlay         150G   40G  104G  28% /var/lib/docker/overlay2/ac36f36e2088a57ce77a445c7ae773f52d84126a1658fa82b182df265733b17e/merged
+overlay         150G   40G  104G  28% /var/lib/docker/overlay2/1fc7d0eba079ade859e31e1a947ca7f80651c3732a0351a4b9215201b1b0ae1f/merged
+overlay         150G   40G  104G  28% /var/lib/docker/overlay2/ab6cfd5e9901cb858de1ad786f4c4b814aa05b821af8a0266462571980aa9a5e/merged
+

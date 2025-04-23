@@ -1,0 +1,124 @@
+version: '3.8'
+
+services:
+  # Backend API service
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: football-guess-who-backend
+    restart: unless-stopped
+    depends_on:
+      - postgres
+    ports:
+      - "3000:3000"
+    networks:
+      - app-network
+    volumes:
+      - backend-logs:/app/logs
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - DATABASE_URL=postgresql://postgres:footballguesswhopw123@postgres:5432/football_guess_who
+      - API_PREFIX=/api
+      - CORS_ORIGIN=https://who.gair.com.au
+      - JWT_SECRET=f00tb4llGu3ssWh0S3cr3tK3y2023
+      - JWT_EXPIRES_IN=1d
+      - JWT_REFRESH_SECRET=r3fr3shK3yF00tb4llGu3ssWh02023
+      - JWT_REFRESH_EXPIRES_IN=7d
+      - DEFAULT_TURN_TIME_LIMIT=60
+      - DEFAULT_MAX_QUESTIONS=20
+      - LOG_LEVEL=info
+      - RATE_LIMIT_WINDOW_MS=900000
+      - RATE_LIMIT_MAX=100
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # PostgreSQL database service
+  postgres:
+    image: postgres:14-alpine
+    container_name: football-guess-who-postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    networks:
+      - app-network
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=footballguesswhopw123
+      - POSTGRES_DB=football_guess_who
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # Nginx service for frontend and routing
+  nginx:
+    image: nginx:alpine
+    container_name: football-guess-who-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - backend
+    networks:
+      - app-network
+    volumes:
+      - ./nginx/conf:/etc/nginx/conf.d
+      - ./nginx/ssl:/etc/nginx/ssl
+      - ./frontend/dist:/usr/share/nginx/html
+      - nginx-logs:/var/log/nginx
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:80/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # Test Runner service
+  test-runner:
+    build:
+      context: ./qa-testing/test-runner
+      dockerfile: Dockerfile
+    container_name: football-guess-who-test-runner
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=production
+      - PORT=3001
+      - AUTH_USERNAME=${TEST_RUNNER_USERNAME:-admin}
+      - AUTH_PASSWORD=${TEST_RUNNER_PASSWORD:-password123}
+      - JWT_SECRET=${TEST_RUNNER_JWT_SECRET:-football-guess-who-test-runner-secret-key}
+      - CORS_ORIGIN=https://who.gair.com.au
+    depends_on:
+      - backend
+    networks:
+      - app-network
+    volumes:
+      - test-runner-data:/app/data
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "-", "http://localhost:3001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  postgres-data:
+  backend-logs:
+  nginx-logs:
+  test-runner-data: 

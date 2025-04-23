@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  frontend:
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    volumes:
+      - /tmp
+    healthcheck:
+      retries: 5
+
+  backend:
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    volumes:
+      - /tmp
+    healthcheck:
+      retries: 5
+
+  db:
+    security_opt:
+      - no-new-privileges:true
+    volumes:
+      - postgres-data:/var/lib/postgresql/data:Z
+    healthcheck:
+      retries: 3
+
+  redis:
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    volumes:
+      - redis-data:/data:Z
+      - /tmp
+    healthcheck:
+      retries: 3

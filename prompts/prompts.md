@@ -143,7 +143,7 @@ You are a frontend developer starting work on the "Football Guess Who" game clie
 
 **Instructions:**
 
-1. Review `/root/guess-who-footballer/master-document.md` and `/root/guess-who-footballer/guidelines/frontend-team-guidelines.md`
+1. Review `/root/guess-who-footballer/master-document.md` and `/root/guess-who-footballer/guidelines/frontend-team-guidelines.md` and front end UI/UX Design Phase from this production version `/root/guess-who-footballer/production/logs/ui-ux-design-log.md`
 2. Review the UI/UX design deliverables
 3. Review the previous implementation from `/root/guess-who-footballer/logs-from-dev-env/frontend-foundation-log.md`
 4. Set up the following in the `/root/guess-who-footballer` directory:

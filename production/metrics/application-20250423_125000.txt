@@ -1,0 +1,44 @@
+=== Application Metrics ===
+Date: Wed Apr 23 12:50:02 PM UTC 2025
+
+Database Metrics:
+- Active connections:
+ count 
+-------
+     6
+(1 row)
+
+- Database size:
+ pg_size_pretty 
+----------------
+ 8593 kB
+(1 row)
+
+- Table row counts:
+ schemaname | relname | n_live_tup 
+------------+---------+------------
+(0 rows)
+
+
+Redis Metrics:
+- Redis info:
+connected_clients:1
+used_memory_human:1020.15K
+keyspace_hits:0
+keyspace_misses:0
+connected_slaves:0
+- Session keys:
+0
+- Game state keys:
+0
+
+Backend API Metrics:
+Backend API not responding.
+
+Game Metrics:
+- Games started today (estimated):
+0
+- Multiplayer games today (estimated):
+0
+- Games won today (estimated):
+0

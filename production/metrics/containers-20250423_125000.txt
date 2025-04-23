@@ -1,0 +1,13 @@
+=== Docker Container Metrics ===
+Date: Wed Apr 23 12:50:00 PM UTC 2025
+
+NAME                     CPU %     MEM USAGE / LIMIT     NET I/O         BLOCK I/O    PIDS
+footballer-frontend      0.00%     0B / 0B               0B / 0B         0B / 0B      0
+footballer-test-runner   0.00%     0B / 0B               0B / 0B         0B / 0B      0
+footballer-backend       0.00%     0B / 0B               0B / 0B         0B / 0B      0
+--                       --        -- / --               --              --           --
+footballer-db            0.01%     16.43MiB / 15.21GiB   2.22kB / 126B   0B / 238kB   7
+--                       --        -- / --               --              --           --
+--                       --        -- / --               --              --           --
+--                       --        -- / --               --              --           --
+--                       --        -- / --               --              --           --

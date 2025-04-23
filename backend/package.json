@@ -1,0 +1,58 @@
+{
+  "name": "football-guess-who-backend",
+  "version": "1.0.0",
+  "description": "Backend service for Football Guess Who game",
+  "main": "dist/index.js",
+  "scripts": {
+    "start": "node dist/index.js",
+    "build": "tsc",
+    "dev": "ts-node-dev --respawn src/index.ts",
+    "test": "jest"
+  },
+  "keywords": [
+    "football",
+    "game",
+    "guess",
+    "who",
+    "nodejs",
+    "typescript",
+    "express",
+    "socketio"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@prisma/client": "4.16.1",
+    "bcrypt": "5.1.0",
+    "cors": "2.8.5",
+    "dotenv": "16.3.1",
+    "express": "4.18.2",
+    "express-rate-limit": "6.7.1",
+    "helmet": "7.0.0",
+    "jsonwebtoken": "9.0.1",
+    "pino": "8.14.1",
+    "pino-http": "8.3.3",
+    "redis": "4.6.7",
+    "socket.io": "4.7.1",
+    "uuid": "9.0.0",
+    "zod": "3.21.4"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "5.0.0",
+    "@types/cors": "2.8.13",
+    "@types/express": "4.17.17",
+    "@types/jest": "29.5.2",
+    "@types/jsonwebtoken": "9.0.2",
+    "@types/node": "20.3.3",
+    "@types/uuid": "9.0.2",
+    "jest": "29.5.0",
+    "prisma": "4.16.1",
+    "ts-jest": "29.1.1",
+    "ts-node": "10.9.1",
+    "ts-node-dev": "2.0.0",
+    "typescript": "5.1.6"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+} 

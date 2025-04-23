@@ -1,0 +1,154 @@
+{
+  "questions": [
+    {
+      "id": "q001",
+      "text": "Is the player a forward?",
+      "trait": "position",
+      "expectedValues": ["FWD"]
+    },
+    {
+      "id": "q002",
+      "text": "Is the player a midfielder?",
+      "trait": "position",
+      "expectedValues": ["MID"]
+    },
+    {
+      "id": "q003",
+      "text": "Is the player a defender?",
+      "trait": "position",
+      "expectedValues": ["DEF"]
+    },
+    {
+      "id": "q004",
+      "text": "Is the player a goalkeeper?",
+      "trait": "position",
+      "expectedValues": ["GK"]
+    },
+    {
+      "id": "q005",
+      "text": "Does the player have blonde hair?",
+      "trait": "hairColor",
+      "expectedValues": ["blonde"]
+    },
+    {
+      "id": "q006",
+      "text": "Does the player have black hair?",
+      "trait": "hairColor",
+      "expectedValues": ["black"]
+    },
+    {
+      "id": "q007",
+      "text": "Does the player have brown hair?",
+      "trait": "hairColor",
+      "expectedValues": ["brown"]
+    },
+    {
+      "id": "q008",
+      "text": "Does the player have ginger hair?",
+      "trait": "hairColor",
+      "expectedValues": ["ginger"]
+    },
+    {
+      "id": "q009",
+      "text": "Does the player have a beard or facial hair?",
+      "trait": "facialHair",
+      "expectedValues": ["beard", "mustache"]
+    },
+    {
+      "id": "q010",
+      "text": "Does the player play for a Premier League club?",
+      "trait": "club",
+      "expectedValues": ["Manchester City", "Liverpool", "Arsenal", "Manchester United", "Tottenham Hotspur"]
+    },
+    {
+      "id": "q011",
+      "text": "Does the player play for Real Madrid?",
+      "trait": "club",
+      "expectedValues": ["Real Madrid"]
+    },
+    {
+      "id": "q012",
+      "text": "Does the player play for Barcelona?",
+      "trait": "club",
+      "expectedValues": ["Barcelona"]
+    },
+    {
+      "id": "q013",
+      "text": "Does the player play for Bayern Munich?",
+      "trait": "club",
+      "expectedValues": ["Bayern Munich"]
+    },
+    {
+      "id": "q014",
+      "text": "Is the player from England?",
+      "trait": "nation",
+      "expectedValues": ["England"]
+    },
+    {
+      "id": "q015",
+      "text": "Is the player from Spain?",
+      "trait": "nation",
+      "expectedValues": ["Spain"]
+    },
+    {
+      "id": "q016",
+      "text": "Is the player from Brazil?",
+      "trait": "nation",
+      "expectedValues": ["Brazil"]
+    },
+    {
+      "id": "q017",
+      "text": "Is the player from France?",
+      "trait": "nation",
+      "expectedValues": ["France"]
+    },
+    {
+      "id": "q018",
+      "text": "Is the player from Portugal?",
+      "trait": "nation",
+      "expectedValues": ["Portugal"]
+    },
+    {
+      "id": "q019",
+      "text": "Is the player from Germany?",
+      "trait": "nation",
+      "expectedValues": ["Germany"]
+    },
+    {
+      "id": "q020",
+      "text": "Is the player over 30 years old?",
+      "trait": "ageBracket",
+      "expectedValues": ["30+"]
+    },
+    {
+      "id": "q021",
+      "text": "Is the player between 25-30 years old?",
+      "trait": "ageBracket",
+      "expectedValues": ["25-30"]
+    },
+    {
+      "id": "q022",
+      "text": "Is the player younger than 25?",
+      "trait": "ageBracket",
+      "expectedValues": ["20-25", "under-20"]
+    },
+    {
+      "id": "q023",
+      "text": "Does the player wear black boots?",
+      "trait": "bootsColor",
+      "expectedValues": ["black"]
+    },
+    {
+      "id": "q024",
+      "text": "Does the player wear white boots?",
+      "trait": "bootsColor",
+      "expectedValues": ["white"]
+    },
+    {
+      "id": "q025",
+      "text": "Does the player wear colored boots (not black or white)?",
+      "trait": "bootsColor",
+      "expectedValues": ["blue", "red", "yellow", "green", "orange", "pink", "purple", "gold"]
+    }
+  ]
+} 
